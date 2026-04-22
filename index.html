@@ -3,41 +3,375 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UK News Aggregator</title>
+    <title>Prediction Markets – Breaking News</title>
 
     <!-- Google AdSense Verification -->
     <meta name="google-adsense-account" content="ca-pub-6914086930663690">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6914086930663690"
      crossorigin="anonymous"></script>
 
-    <!-- Automatic redirect to main site -->
-    <meta http-equiv="refresh" content="0; url=/gb_great_news/">
-    <link rel="canonical" href="/gb_great_news/">
+    <link rel="canonical" href="/">
 
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0f1117;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #1a1d27;
+            border-bottom: 1px solid #2d3148;
+            padding: 16px 24px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-        .container {
-            text-align: center;
-        }
-        a {
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
             color: #fff;
-            text-decoration: underline;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .logo span {
+            color: #6366f1;
+        }
+
+        .powered-by {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .powered-by a {
+            color: #818cf8;
+            text-decoration: none;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f1f5f9;
+        }
+
+        .live-badge {
+            background: #ef4444;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+            letter-spacing: 0.05em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: #1a1d27;
+            border: 1px solid #2d3148;
+            border-radius: 14px;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            border-color: #6366f1;
+            transform: translateY(-2px);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            background: #2d3148;
+        }
+
+        .card-img-placeholder {
+            width: 100%;
+            height: 140px;
+            background: linear-gradient(135deg, #2d3148, #1e2035);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .card-body {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag {
+            background: #2d3148;
+            color: #94a3b8;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            text-transform: capitalize;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #f1f5f9;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .card-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .card-title a:hover {
+            color: #818cf8;
+        }
+
+        .outcomes {
+            display: flex;
+            gap: 8px;
+        }
+
+        .outcome-btn {
+            flex: 1;
+            padding: 8px 4px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            border: none;
+            cursor: default;
+        }
+
+        .outcome-yes {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .outcome-no {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .outcome-other {
+            background: rgba(99, 102, 241, 0.12);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 8px;
+            border-top: 1px solid #2d3148;
+        }
+
+        .vol-label {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .vol-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .trade-link {
+            font-size: 12px;
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .trade-link:hover {
+            color: #818cf8;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 0;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #f87171;
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.2);
+            border-radius: 12px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 32px 20px;
+            color: #475569;
+            font-size: 13px;
+            border-top: 1px solid #1e2233;
+        }
+
+        footer a { color: #6366f1; text-decoration: none; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🇬🇧 UK News Aggregator</h1>
-        <p>Redirecting to <a href="/gb_great_news/">news site</a>...</p>
+
+<header>
+    <div class="logo">📊 <span>Predict</span>Feed</div>
+    <div class="powered-by">Data by <a href="https://polymarket.com" target="_blank" rel="noopener">Polymarket</a></div>
+</header>
+
+<main>
+    <div class="section-header">
+        <h2>🔴 Breaking News</h2>
+        <span class="live-badge">LIVE</span>
     </div>
+    <div class="grid" id="grid">
+        <div class="loading">Loading markets…</div>
+    </div>
+</main>
+
+<footer>
+    Market data from <a href="https://polymarket.com" target="_blank" rel="noopener">Polymarket</a> ·
+    <a href="/gb_great_news/">UK News Aggregator →</a>
+</footer>
+
+<script>
+const POLYMARKET_API = 'https://gamma-api.polymarket.com/events?limit=20&active=true&closed=false&order=volume24hr&ascending=false';
+
+function fmtVolume(v) {
+    if (v >= 1e6) return '$' + (v / 1e6).toFixed(1) + 'M';
+    if (v >= 1e3) return '$' + (v / 1e3).toFixed(1) + 'K';
+    return '$' + Math.round(v);
+}
+
+function pct(p) {
+    return Math.round(parseFloat(p) * 100) + '%';
+}
+
+function buildCard(event) {
+    const slug = event.slug || '';
+    const url = `https://polymarket.com/event/${slug}`;
+    const tags = (event.tags || []).slice(0, 3).map(t => t.label || t.slug).filter(Boolean);
+    const vol24 = event.volume24hr || 0;
+    const markets = event.markets || [];
+
+    let outcomesHtml = '';
+    if (markets.length === 1) {
+        const m = markets[0];
+        const outcomes = JSON.parse(m.outcomes || '[]');
+        const prices = JSON.parse(m.outcomePrices || '[]');
+        const isYesNo = outcomes.length === 2 && outcomes[0] === 'Yes';
+        outcomesHtml = outcomes.slice(0, 2).map((o, i) => {
+            const cls = isYesNo ? (i === 0 ? 'outcome-yes' : 'outcome-no') : 'outcome-other';
+            const label = isYesNo ? (o + ' ' + pct(prices[i] || 0)) : (o.slice(0, 14) + ' ' + pct(prices[i] || 0));
+            return `<div class="outcome-btn ${cls}">${label}</div>`;
+        }).join('');
+    } else if (markets.length > 1) {
+        // Multi-outcome: show top 2 by price
+        const sorted = [...markets].sort((a, b) => {
+            const pa = parseFloat(JSON.parse(a.outcomePrices || '[0]')[0] || 0);
+            const pb = parseFloat(JSON.parse(b.outcomePrices || '[0]')[0] || 0);
+            return pb - pa;
+        }).slice(0, 2);
+        outcomesHtml = sorted.map(m => {
+            const price = parseFloat(JSON.parse(m.outcomePrices || '[0]')[0] || 0);
+            const label = (m.question || '').slice(0, 16) + ' ' + pct(price);
+            return `<div class="outcome-btn outcome-other">${label}</div>`;
+        }).join('');
+    }
+
+    const imgHtml = event.image
+        ? `<img class="card-img" src="${event.image}" alt="" loading="lazy" onerror="this.style.display='none'">`
+        : `<div class="card-img-placeholder">📈</div>`;
+
+    const tagsHtml = tags.map(t => `<span class="tag">${t}</span>`).join('');
+
+    return `
+        <div class="card">
+            <a href="${url}" target="_blank" rel="noopener">${imgHtml}</a>
+            <div class="card-body">
+                ${tagsHtml ? `<div class="card-tags">${tagsHtml}</div>` : ''}
+                <div class="card-title">
+                    <a href="${url}" target="_blank" rel="noopener">${event.title || ''}</a>
+                </div>
+                ${outcomesHtml ? `<div class="outcomes">${outcomesHtml}</div>` : ''}
+                <div class="card-footer">
+                    <div>
+                        <div class="vol-label">24h Volume</div>
+                        <div class="vol-value">${fmtVolume(vol24)}</div>
+                    </div>
+                    <a class="trade-link" href="${url}" target="_blank" rel="noopener">Trade →</a>
+                </div>
+            </div>
+        </div>`;
+}
+
+async function loadMarkets() {
+    const grid = document.getElementById('grid');
+    try {
+        const res = await fetch(POLYMARKET_API);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const events = await res.json();
+        if (!events.length) {
+            grid.innerHTML = '<div class="loading">No markets found.</div>';
+            return;
+        }
+        grid.innerHTML = events.map(buildCard).join('');
+    } catch (err) {
+        grid.innerHTML = `<div class="error">Failed to load markets: ${err.message}</div>`;
+    }
+}
+
+loadMarkets();
+</script>
+
 </body>
 </html>
