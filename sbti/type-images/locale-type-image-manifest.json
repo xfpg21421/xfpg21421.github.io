@@ -1,0 +1,504 @@
+{
+  "version": "sbti-v0.4.3-t010-webp",
+  "generatedAt": "2026-04-22T10:02:17.943Z",
+  "generator": "compose-type-images.mjs",
+  "contract": {
+    "localeFallbackChain": [
+      "currentLocale",
+      "zh",
+      "placeholder"
+    ],
+    "placeholderFolder": "/type-images/placeholder",
+    "placeholderFile": "/type-images/placeholder/placeholder.png",
+    "supportedLocales": [
+      "zh",
+      "en",
+      "ja"
+    ],
+    "assetExtensions": [
+      "webp",
+      "png"
+    ],
+    "primaryFormat": "webp"
+  },
+  "zhCanonicalSource": "/type-images/zh",
+  "flatSourceLegacy": "/type-images",
+  "typeCodes": [
+    "OG8K",
+    "THAN-K",
+    "Dior-s",
+    "MUM",
+    "FAKE",
+    "GOGO",
+    "MALO",
+    "ZZZZ",
+    "SEXY",
+    "IMSB",
+    "CTRL",
+    "LOVE-R",
+    "WOC",
+    "THIN-K",
+    "MONK",
+    "ATM-er",
+    "BOSS",
+    "JOKE-R",
+    "SHIT",
+    "SOLO",
+    "FUKK",
+    "DEAD",
+    "OH-NO",
+    "POOR",
+    "IMFW",
+    "DRUNK",
+    "HHHH"
+  ],
+  "coverage": {
+    "zh": {
+      "status": "primary",
+      "generator": "gpt",
+      "generatedAt": "2026-04-21T08:08:12.461Z",
+      "fallbackExpectation": "resolve from /type-images/zh first, then /type-images legacy root",
+      "presentCount": 27,
+      "missingCount": 0,
+      "missing": [],
+      "present": [
+        "OG8K",
+        "THAN-K",
+        "Dior-s",
+        "MUM",
+        "FAKE",
+        "GOGO",
+        "MALO",
+        "ZZZZ",
+        "SEXY",
+        "IMSB",
+        "CTRL",
+        "LOVE-R",
+        "WOC",
+        "THIN-K",
+        "MONK",
+        "ATM-er",
+        "BOSS",
+        "JOKE-R",
+        "SHIT",
+        "SOLO",
+        "FUKK",
+        "DEAD",
+        "OH-NO",
+        "POOR",
+        "IMFW",
+        "DRUNK",
+        "HHHH"
+      ],
+      "presentExtensionsByCode": {
+        "OG8K": [
+          "webp",
+          "png"
+        ],
+        "THAN-K": [
+          "webp",
+          "png"
+        ],
+        "Dior-s": [
+          "webp",
+          "png"
+        ],
+        "MUM": [
+          "webp",
+          "png"
+        ],
+        "FAKE": [
+          "webp",
+          "png"
+        ],
+        "GOGO": [
+          "webp",
+          "png"
+        ],
+        "MALO": [
+          "webp",
+          "png"
+        ],
+        "ZZZZ": [
+          "webp",
+          "png"
+        ],
+        "SEXY": [
+          "webp",
+          "png"
+        ],
+        "IMSB": [
+          "webp",
+          "png"
+        ],
+        "CTRL": [
+          "webp",
+          "png"
+        ],
+        "LOVE-R": [
+          "webp",
+          "png"
+        ],
+        "WOC": [
+          "webp",
+          "png"
+        ],
+        "THIN-K": [
+          "webp",
+          "png"
+        ],
+        "MONK": [
+          "webp",
+          "png"
+        ],
+        "ATM-er": [
+          "webp",
+          "png"
+        ],
+        "BOSS": [
+          "webp",
+          "png"
+        ],
+        "JOKE-R": [
+          "webp",
+          "png"
+        ],
+        "SHIT": [
+          "webp",
+          "png"
+        ],
+        "SOLO": [
+          "webp",
+          "png"
+        ],
+        "FUKK": [
+          "webp",
+          "png"
+        ],
+        "DEAD": [
+          "webp",
+          "png"
+        ],
+        "OH-NO": [
+          "webp",
+          "png"
+        ],
+        "POOR": [
+          "webp",
+          "png"
+        ],
+        "IMFW": [
+          "webp",
+          "png"
+        ],
+        "DRUNK": [
+          "webp",
+          "png"
+        ],
+        "HHHH": [
+          "webp",
+          "png"
+        ]
+      },
+      "primaryFormat": "webp"
+    },
+    "en": {
+      "status": "primary",
+      "generator": "gpt",
+      "generatedAt": "2026-04-21T08:08:12.462Z",
+      "fallbackExpectation": "locale-specific first, then zh fallback",
+      "presentCount": 27,
+      "missingCount": 0,
+      "missing": [],
+      "present": [
+        "OG8K",
+        "THAN-K",
+        "Dior-s",
+        "MUM",
+        "FAKE",
+        "GOGO",
+        "MALO",
+        "ZZZZ",
+        "SEXY",
+        "IMSB",
+        "CTRL",
+        "LOVE-R",
+        "WOC",
+        "THIN-K",
+        "MONK",
+        "ATM-er",
+        "BOSS",
+        "JOKE-R",
+        "SHIT",
+        "SOLO",
+        "FUKK",
+        "DEAD",
+        "OH-NO",
+        "POOR",
+        "IMFW",
+        "DRUNK",
+        "HHHH"
+      ],
+      "presentExtensionsByCode": {
+        "OG8K": [
+          "webp",
+          "png"
+        ],
+        "THAN-K": [
+          "webp",
+          "png"
+        ],
+        "Dior-s": [
+          "webp",
+          "png"
+        ],
+        "MUM": [
+          "webp",
+          "png"
+        ],
+        "FAKE": [
+          "webp",
+          "png"
+        ],
+        "GOGO": [
+          "webp",
+          "png"
+        ],
+        "MALO": [
+          "webp",
+          "png"
+        ],
+        "ZZZZ": [
+          "webp",
+          "png"
+        ],
+        "SEXY": [
+          "webp",
+          "png"
+        ],
+        "IMSB": [
+          "webp",
+          "png"
+        ],
+        "CTRL": [
+          "webp",
+          "png"
+        ],
+        "LOVE-R": [
+          "webp",
+          "png"
+        ],
+        "WOC": [
+          "webp",
+          "png"
+        ],
+        "THIN-K": [
+          "webp",
+          "png"
+        ],
+        "MONK": [
+          "webp",
+          "png"
+        ],
+        "ATM-er": [
+          "webp",
+          "png"
+        ],
+        "BOSS": [
+          "webp",
+          "png"
+        ],
+        "JOKE-R": [
+          "webp",
+          "png"
+        ],
+        "SHIT": [
+          "webp",
+          "png"
+        ],
+        "SOLO": [
+          "webp",
+          "png"
+        ],
+        "FUKK": [
+          "webp",
+          "png"
+        ],
+        "DEAD": [
+          "webp",
+          "png"
+        ],
+        "OH-NO": [
+          "webp",
+          "png"
+        ],
+        "POOR": [
+          "webp",
+          "png"
+        ],
+        "IMFW": [
+          "webp",
+          "png"
+        ],
+        "DRUNK": [
+          "webp",
+          "png"
+        ],
+        "HHHH": [
+          "webp",
+          "png"
+        ]
+      },
+      "primaryFormat": "webp"
+    },
+    "ja": {
+      "status": "primary",
+      "generator": "gpt",
+      "generatedAt": "2026-04-21T08:08:12.462Z",
+      "fallbackExpectation": "locale-specific first, then zh fallback",
+      "presentCount": 27,
+      "missingCount": 0,
+      "missing": [],
+      "present": [
+        "OG8K",
+        "THAN-K",
+        "Dior-s",
+        "MUM",
+        "FAKE",
+        "GOGO",
+        "MALO",
+        "ZZZZ",
+        "SEXY",
+        "IMSB",
+        "CTRL",
+        "LOVE-R",
+        "WOC",
+        "THIN-K",
+        "MONK",
+        "ATM-er",
+        "BOSS",
+        "JOKE-R",
+        "SHIT",
+        "SOLO",
+        "FUKK",
+        "DEAD",
+        "OH-NO",
+        "POOR",
+        "IMFW",
+        "DRUNK",
+        "HHHH"
+      ],
+      "presentExtensionsByCode": {
+        "OG8K": [
+          "webp",
+          "png"
+        ],
+        "THAN-K": [
+          "webp",
+          "png"
+        ],
+        "Dior-s": [
+          "webp",
+          "png"
+        ],
+        "MUM": [
+          "webp",
+          "png"
+        ],
+        "FAKE": [
+          "webp",
+          "png"
+        ],
+        "GOGO": [
+          "webp",
+          "png"
+        ],
+        "MALO": [
+          "webp",
+          "png"
+        ],
+        "ZZZZ": [
+          "webp",
+          "png"
+        ],
+        "SEXY": [
+          "webp",
+          "png"
+        ],
+        "IMSB": [
+          "webp",
+          "png"
+        ],
+        "CTRL": [
+          "webp",
+          "png"
+        ],
+        "LOVE-R": [
+          "webp",
+          "png"
+        ],
+        "WOC": [
+          "webp",
+          "png"
+        ],
+        "THIN-K": [
+          "webp",
+          "png"
+        ],
+        "MONK": [
+          "webp",
+          "png"
+        ],
+        "ATM-er": [
+          "webp",
+          "png"
+        ],
+        "BOSS": [
+          "webp",
+          "png"
+        ],
+        "JOKE-R": [
+          "webp",
+          "png"
+        ],
+        "SHIT": [
+          "webp",
+          "png"
+        ],
+        "SOLO": [
+          "webp",
+          "png"
+        ],
+        "FUKK": [
+          "webp",
+          "png"
+        ],
+        "DEAD": [
+          "webp",
+          "png"
+        ],
+        "OH-NO": [
+          "webp",
+          "png"
+        ],
+        "POOR": [
+          "webp",
+          "png"
+        ],
+        "IMFW": [
+          "webp",
+          "png"
+        ],
+        "DRUNK": [
+          "webp",
+          "png"
+        ],
+        "HHHH": [
+          "webp",
+          "png"
+        ]
+      },
+      "primaryFormat": "webp"
+    }
+  }
+}

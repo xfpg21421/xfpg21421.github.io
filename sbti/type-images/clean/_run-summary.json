@@ -1,0 +1,47 @@
+{
+  "runStartedAt": "2026-04-21T07:50:10.903Z",
+  "runEndedAt": "2026-04-21T07:51:16.687Z",
+  "quality": "medium",
+  "unitPrice": 0.042,
+  "budget": 5,
+  "concurrency": 2,
+  "attempted": 5,
+  "ok": 5,
+  "failed": 0,
+  "spentUsd": 0.21,
+  "elapsedSec": 65.8,
+  "budgetStopped": false,
+  "generated": [
+    {
+      "code": "POOR",
+      "file": "POOR.png",
+      "bytes": 1244072,
+      "attempt": 1
+    },
+    {
+      "code": "OH-NO",
+      "file": "OH-NO.png",
+      "bytes": 1297476,
+      "attempt": 1
+    },
+    {
+      "code": "IMFW",
+      "file": "IMFW.png",
+      "bytes": 1184739,
+      "attempt": 1
+    },
+    {
+      "code": "HHHH",
+      "file": "HHHH.png",
+      "bytes": 1192909,
+      "attempt": 1
+    },
+    {
+      "code": "DRUNK",
+      "file": "DRUNK.png",
+      "bytes": 1229366,
+      "attempt": 1
+    }
+  ],
+  "failedDetails": []
+}
