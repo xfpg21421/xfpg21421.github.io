@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="g" gradientUnits="userSpaceOnUse" cx="22.8" cy="27.6" r="27.6">
+      <stop offset="0" stop-color="#f0563f"/>
+      <stop offset="1" stop-color="#c9301f"/>
+    </radialGradient>
+  </defs>
+  <circle cx="30" cy="36" r="24" fill="url(#g)" stroke="#8f1d10" stroke-width="2.2"/>
+  <ellipse cx="30" cy="49.2" rx="13.2" ry="9.1" fill="#f6d7b0"/>
+  <g fill="#c9301f">
+    <ellipse cx="28.8" cy="10.8" rx="3.8" ry="7.2" transform="rotate(-11.5 28.8 10.8)"/>
+    <ellipse cx="35.3" cy="12" rx="3.4" ry="6.2" transform="rotate(14.3 35.3 12)"/>
+  </g>
+  <g fill="#fff">
+    <circle cx="36.2" cy="30" r="5.8"/>
+    <circle cx="44.9" cy="30" r="5.3"/>
+  </g>
+  <g fill="#1c1f26">
+    <circle cx="38.2" cy="28.8" r="2.4"/>
+    <circle cx="46.3" cy="28.8" r="2.2"/>
+  </g>
+  <rect x="-15.4" y="-2.9" width="30.7" height="5.8" fill="#20232a" transform="translate(40.8 23.8) rotate(18.3)"/>
+  <path d="M48.7 34.8 L62.4 38.9 L48 43.7 Z" fill="#f7a11a" stroke="#c97c08" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
