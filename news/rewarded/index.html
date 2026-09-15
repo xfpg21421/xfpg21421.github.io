@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Continue to Article</title>
-    <meta name="description" content="Watch a short video to continue to the article.">
+    <title>Watch Ads to Access</title>
+    <meta name="description" content="Watch a short video ad to access the full article — free, no sign-up.">
     <meta name="robots" content="noindex">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -86,13 +86,71 @@
             margin-bottom: 16px;
         }
 
+        .ad-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px solid rgba(79, 70, 229, 0.25);
+            color: #4f46e5;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 4px 11px;
+            border-radius: 999px;
+            margin-bottom: 12px;
+        }
+
         .cta-img {
             display: block;
             max-width: 100%;
-            max-height: 55vh;
-            margin: 0 auto 20px;
+            max-height: 34vh;
+            margin: 0 auto 16px;
             border-radius: 8px;
             object-fit: cover;
+        }
+
+        /* 文章信息卡：标题 + 栏目 + 来源，用于吸引点击并背书可信度 */
+        .article-box {
+            text-align: left;
+            max-width: 460px;
+            margin: 0 auto 16px;
+            padding: 14px 16px;
+            background: #f8faff;
+            border: 1px solid #e0e7ff;
+            border-left: 3px solid #4f46e5;
+            border-radius: 8px;
+        }
+
+        .article-kicker {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: #4f46e5;
+            margin-bottom: 6px;
+        }
+
+        .article-title {
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .article-meta {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .pitch {
+            max-width: 440px;
+            margin: 0 auto 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #4b5563;
         }
 
         .cta-btn {
@@ -252,13 +310,26 @@
     <!-- 主卡片：观看广告 -->
     <div class="card" id="mainCard">
         <button class="close" id="closeBtn" aria-label="Close">✕</button>
-        <h1 id="ctaTextEl">Continue to Article</h1>
-        <p class="sub" id="ctaSubEl">Watch a short video to continue reading.</p>
+
+        <span class="ad-pill">▶ Video Ad</span>
+        <h1 id="ctaTextEl">Watch Ads to Access</h1>
+        <p class="sub" id="ctaSubEl">Watch one short video ad, then the full article opens — free, no sign-up.</p>
+
         <img class="cta-img" id="ctaImgEl" alt="Article preview" onerror="this.style.display='none'">
+
+        <!-- 文章信息卡：内容来自 ARTICLE_META 或目标页 og:title -->
+        <div class="article-box hidden" id="articleBoxEl">
+            <span class="article-kicker" id="articleKickerEl"></span>
+            <h2 class="article-title" id="articleTitleEl"></h2>
+            <p class="article-meta" id="articleMetaEl"></p>
+        </div>
+
+        <p class="pitch">Discover the latest news, trending stories, and topics Americans are talking about right now.</p>
+
         <button class="cta-btn" id="watchBtn" disabled>Preparing ad…</button>
         <p class="status-line" id="statusLine"></p>
         <button class="fallback-link" id="fallbackLink">Ad unavailable — continue to article</button>
-        <p class="fineprint">You'll be taken to the article automatically after the video finishes.</p>
+        <p class="fineprint">The full article opens automatically as soon as the video ad finishes.</p>
     </div>
 
     <!-- 成功卡片：已解锁 -->
@@ -288,18 +359,32 @@
 <script>
 /* ============================================================
  * Rewarded gate page — config
- * 切真广告：填 NETWORK_CODE / AD_UNIT_PATH，MOCK_MODE 改 false
+ * 当前 AD_UNIT_PATH 用的是 Google 公开测试 rewarded 位，仅供联调，
+ * **禁止用于正式投放**。换正式位：改成自有 GAM 网络的 rewarded ad unit，
+ * 并把站点加进该网络的 inventory。
  * ============================================================ */
 const AD_CONFIG = {
-    NETWORK_CODE: '',            // Opera GAM network code, e.g. '12345678'
-    AD_UNIT_PATH: '',            // e.g. '/12345678/news/rewarded'
-    MOCK_MODE: true,             // Phase 3 切 false
+    // Google 公开测试位（GPT 官方 rewarded 示例网络 22639388115）——不能上线
+    AD_UNIT_PATH: '/22639388115/rewarded_web_example',
+    MOCK_MODE: false,            // true = 本地假广告；也可用 ?mock=1 临时覆盖
     MOCK_READY_DELAY: 800,       // mock: 模拟 rewardedSlotReady 延迟
     MOCK_REWARD_AFTER: 5000,     // mock: 与 GAM 一致，可视满 5 秒发奖
-    REAL_READY_TIMEOUT: 15000,   // real: 无填充降级超时
+    REAL_READY_TIMEOUT: 10000,   // real: 等 rewardedSlotReady 上限，超时进无填充
     REDIRECT_COUNTDOWN: 5,       // 发奖后自动跳转倒计时（秒）
     SKIP_RETURN_VISITS: true,    // 已解锁过则直接放行；false = 每次都拦
-    UNLOCK_TTL_MS: 0             // 解锁态有效期（毫秒），0 = 永久
+    UNLOCK_TTL_MS: 0,            // 解锁态有效期（毫秒），0 = 永久
+    TARGETING_PARAM: 'brand',    // 要透传的 URL 参数名
+    TARGETING_KEY: 'segment'     // 透传成 GAM key-value：brand=Opr_103 -> segment=Opr_103
+};
+
+/* 状态文案 */
+const TEXT = {
+    preparing: 'Preparing ad…',
+    loading: 'Loading ad…',
+    retry: 'Try again',
+    noFill: 'No ad available right now. Please try again.',
+    blocked: 'The ad could not load. Please turn off your ad blocker and try again.',
+    noReward: 'Reward not granted. Try again when ready.'
 };
 
 /* 事件钩子：仿 toppnyheter eventConfig 结构，null 时打到 console */
@@ -314,6 +399,17 @@ const EVENT_HOOKS = {
 const DEFAULT_DESTINATION = '/news/ira-roth-conversion-window/';
 const DEFAULT_CTA_IMG = 'https://res.feednews.com/assets/v2/e542f86ce3190c11ec06f724778dfe4c?quality=uhq&resize=720&cl=_en';
 const STORAGE_KEY = 'rewarded_unlock';
+
+/* 门页展示的文章信息（吸引点击 + 来源背书）。新增文章时在此登记；
+   未登记的 destination 会兜底抓取目标页的 og:title。 */
+const ARTICLE_META = {
+    '/news/ira-roth-conversion-window/': {
+        kicker: 'RETIREMENT · TAX PLANNING',
+        title: 'She Converted the Whole IRA Before Social Security Started',
+        source: '24/7 Wall Street',
+        date: 'September 10, 2026'
+    }
+};
 
 /* ---------- pure helpers (testable) ---------- */
 function resolveDestination(raw) {
@@ -369,6 +465,32 @@ function track(name, detail) {
     if (typeof hook === 'function') { try { hook(payload); } catch (e) {} }
 }
 
+/* ---------- 广告调试日志（?debug=1 时在屏幕底部显示，便于手机上排查填充） ---------- */
+const DEBUG = params.get('debug') === '1';
+let debugPanel = null;
+function dbg() {
+    const parts = Array.prototype.slice.call(arguments).map(a => {
+        if (typeof a === 'string') return a;
+        try { return JSON.stringify(a); } catch (e) { return String(a); }
+    });
+    const line = '[' + (performance.now() / 1000).toFixed(2) + 's] ' + parts.join(' ');
+    console.log('[rewarded:ad]', line);
+    if (!DEBUG) return;
+    if (!debugPanel) {
+        debugPanel = document.createElement('pre');
+        debugPanel.setAttribute('style',
+            'position:fixed;left:0;right:0;bottom:0;max-height:38vh;overflow:auto;margin:0;padding:8px 10px;' +
+            'background:rgba(17,24,39,.92);color:#d1fae5;font:11px/1.45 ui-monospace,Menlo,monospace;' +
+            'white-space:pre-wrap;word-break:break-all;z-index:2147483000;border-top:2px solid #10b981;');
+        debugPanel.addEventListener('click', () => {   // 点面板折叠，免得挡住底部链接
+            debugPanel.style.maxHeight = debugPanel.style.maxHeight === '20px' ? '38vh' : '20px';
+        });
+        document.body.appendChild(debugPanel);
+    }
+    debugPanel.textContent += line + '\n';
+    debugPanel.scrollTop = debugPanel.scrollHeight;
+}
+
 /* ---------- DOM ---------- */
 const $ = id => document.getElementById(id);
 const mainCard = $('mainCard'), successCard = $('successCard');
@@ -377,9 +499,35 @@ const statusLine = $('statusLine'), continueBtn = $('continueBtn'), successSub =
 const adOverlay = $('adOverlay'), adCloseBtn = $('adCloseBtn'), adCount = $('adCount'), adBar = $('adBar');
 
 /* render params into UI (textContent — no HTML injection) */
-$('ctaTextEl').textContent = params.get('ctaText') || 'Continue to Article';
+$('ctaTextEl').textContent = params.get('ctaText') || 'Watch Ads to Access';
 $('ctaImgEl').src = sanitizeImgUrl(params.get('ctaImg'));
-const BTN_TEXT = params.get('ctaButtonText') || 'Watch Video & Continue →';
+const BTN_TEXT = params.get('ctaButtonText') || 'Watch Video Ad & Continue →';
+
+/* ---------- article info card ---------- */
+function renderArticleMeta(meta) {
+    if (!meta || !meta.title) return;
+    $('articleTitleEl').textContent = meta.title;
+    if (meta.kicker) $('articleKickerEl').textContent = meta.kicker;
+    else $('articleKickerEl').style.display = 'none';
+    const bits = [];
+    if (meta.source) bits.push('By ' + meta.source);
+    if (meta.date) bits.push('Published ' + meta.date);
+    $('articleMetaEl').textContent = bits.join(' · ');
+    if (!bits.length) $('articleMetaEl').style.display = 'none';
+    $('articleBoxEl').classList.remove('hidden');
+}
+
+async function loadArticleMeta(dest) {
+    if (ARTICLE_META[dest]) { renderArticleMeta(ARTICLE_META[dest]); return; }
+    try {
+        const html = await (await fetch(dest)).text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const og = doc.querySelector('meta[property="og:title"]');
+        renderArticleMeta(og ? { title: og.getAttribute('content') } : null);
+    } catch (e) {
+        /* 抓取失败：信息卡保持隐藏，不影响看广告与跳转 */
+    }
+}
 
 /* ---------- ad providers ---------- */
 function MockProvider(hooks) {
@@ -420,64 +568,158 @@ function MockProvider(hooks) {
                 }
             }
         },
+        retry() { this.init(); },   // mock 不会无填充，仅为统一 provider 接口
         destroy() {}
     };
 }
 
 function GamProvider(hooks) {
-    let slot = null, readyEvt = null;
+    let slot = null, readyEvt = null, granted = false, clicked = false;
+    let prefetchEmpty = false, timer = null, servicesEnabled = false;
     window.googletag = window.googletag || { cmd: [] };
+
+    function clearTimer() { if (timer) { clearTimeout(timer); timer = null; } }
+
+    function destroySlot() {
+        if (slot) { try { googletag.destroySlots([slot]); } catch (e) { dbg('destroySlots error', String(e)); } }
+        slot = null; readyEvt = null; granted = false; prefetchEmpty = false;
+    }
+
+    /* 定义并请求 rewarded slot（先不展示）。同一时刻只允许一条 rewarded 请求。 */
+    function request() {
+        googletag.cmd.push(() => {
+            if (slot) { dbg('request ignored: slot in flight'); return; }
+            slot = googletag.defineOutOfPageSlot(
+                AD_CONFIG.AD_UNIT_PATH,
+                googletag.enums.OutOfPageFormat.REWARDED
+            );
+            if (!slot) {                       // 广告位非法或环境不支持
+                dbg('defineOutOfPageSlot returned null');
+                hooks.onNoFill('unsupported');
+                return;
+            }
+            slot.addService(googletag.pubads());
+            if (!servicesEnabled) {
+                wireEvents();
+                applyTargeting();
+                googletag.enableServices();
+                servicesEnabled = true;
+            }
+            googletag.display(slot);
+            dbg('rewarded requested', AD_CONFIG.AD_UNIT_PATH);
+        });
+    }
+
+    /* URL 定向参数透传成 GAM key-value（brand -> segment）。
+       setTargeting 已弃用，优先用 googletag.setConfig。 */
+    function applyTargeting() {
+        const v = params.get(AD_CONFIG.TARGETING_PARAM);
+        if (!v) return;
+        if (typeof googletag.setConfig === 'function') {
+            googletag.setConfig({ targeting: { [AD_CONFIG.TARGETING_KEY]: v } });
+        } else {
+            googletag.pubads().setTargeting(AD_CONFIG.TARGETING_KEY, v);
+        }
+        dbg('targeting', AD_CONFIG.TARGETING_KEY, '=', v);
+    }
+
+    function wireEvents() {
+        const pa = googletag.pubads();
+        pa.addEventListener('rewardedSlotReady', e => {
+            if (e.slot !== slot) return;
+            readyEvt = e;
+            dbg('rewardedSlotReady');
+            hooks.onReady();
+            if (clicked) showAd();             // 用户已点过：Ready 一到就展示
+        });
+        pa.addEventListener('rewardedSlotGranted', e => {
+            if (e.slot !== slot) return;
+            granted = true;                    // 部分需求会在视频结束前就发奖，以此事件为准
+            dbg('rewardedSlotGranted', e.payload || null);
+            hooks.onGranted(e.payload || null);
+        });
+        pa.addEventListener('rewardedSlotVideoCompleted', e => {
+            if (e.slot !== slot) return;
+            dbg('rewardedSlotVideoCompleted');
+        });
+        pa.addEventListener('rewardedSlotClosed', e => {
+            if (e.slot !== slot) return;
+            const wasGranted = granted;
+            dbg('rewardedSlotClosed', { granted: wasGranted });
+            destroySlot(); clicked = false; clearTimer();
+            hooks.onClosed({ granted: wasGranted });
+            if (!wasGranted) { request(); startWatchdog(); }   // 没看完：重新预取，允许再来一次
+        });
+        pa.addEventListener('slotRenderEnded', e => {
+            if (e.slot !== slot || !e.isEmpty) return;
+            dbg('rewarded no fill (slotRenderEnded.isEmpty)');
+            // 预取阶段空返回：静默，等用户点击时再请求；点击后空返回才算无填充
+            if (clicked) { destroySlot(); hooks.onNoFill('empty'); }
+            else { prefetchEmpty = true; destroySlot(); }
+        });
+        pa.addEventListener('slotRequested', e => { if (e.slot === slot) dbg('slotRequested'); });
+        pa.addEventListener('slotOnload', e => { if (e.slot === slot) dbg('slotOnload'); });
+    }
+
+    function showAd() {
+        clearTimer();
+        let shown = false;
+        try { shown = readyEvt.makeRewardedVisible(); } catch (e) { dbg('makeRewardedVisible threw', String(e)); }
+        dbg('makeRewardedVisible ->', shown);
+        if (shown) hooks.onAdImpression();
+        else hooks.onNoFill('makeRewardedVisible-false');
+    }
+
+    /* 看门狗不放进 googletag.cmd：gpt.js 被拦截时 cmd 永不执行，
+       靠 googletag.apiReady 区分"被拦截"和"真的无填充"。 */
+    function startWatchdog() {
+        clearTimer();
+        timer = setTimeout(() => {
+            if (readyEvt) return;
+            const gptLoaded = !!(window.googletag && googletag.apiReady);
+            dbg('ready timeout', { gptLoaded: gptLoaded });
+            hooks.onNoFill(gptLoaded ? 'ready-timeout' : 'gpt-not-loaded');
+        }, AD_CONFIG.REAL_READY_TIMEOUT);
+    }
+
     return {
         init() {
             const s = document.createElement('script');
             s.async = true;
+            s.crossOrigin = 'anonymous';
             s.src = 'https://securepubads.g.doubleclick.net/tag/js/gpt.js';
             document.head.appendChild(s);
-            googletag.cmd.push(() => {
-                slot = googletag.defineOutOfPageSlot(
-                    AD_CONFIG.AD_UNIT_PATH,
-                    googletag.enums.OutOfPageFormat.REWARDED
-                ).addService(googletag.pubads());
-                const pa = googletag.pubads();
-                pa.addEventListener('rewardedSlotReady', evt => { readyEvt = evt; hooks.onReady(); });
-                pa.addEventListener('rewardedSlotGranted', evt => hooks.onGranted(evt.payload || {}));
-                pa.addEventListener('rewardedSlotClosed', () => {
-                    googletag.destroySlots([slot]);
-                    slot = null; readyEvt = null;
-                    hooks.onClosed({ granted: rewardState.granted });
-                });
-                googletag.enableServices();
-                googletag.display(slot);
-            });
+            request();          // 加载即预取，点击时可立即展示
+            startWatchdog();
         },
         show() {
-            if (readyEvt) {
-                hooks.onAdImpression();
-                readyEvt.makeRewardedVisible();
-            }
+            clicked = true;
+            if (readyEvt) { showAd(); return; }
+            if (!slot || prefetchEmpty) request();
+            startWatchdog();
         },
-        requestClose() { /* GAM renders its own close button */ },
-        destroy() { if (slot) { googletag.destroySlots([slot]); slot = null; } }
+        retry() { destroySlot(); clicked = true; request(); startWatchdog(); },
+        requestClose() { /* rewarded 广告的关闭按钮由 GPT 自己渲染 */ },
+        destroy() { clearTimer(); destroySlot(); }
     };
 }
 
 /* ---------- state machine ---------- */
-const rewardState = { ready: false, granted: false, redirected: false };
+const rewardState = { ready: false, granted: false, noFill: false, redirected: false };
 
 function useRealAds() {
-    return !AD_CONFIG.MOCK_MODE && !!AD_CONFIG.AD_UNIT_PATH;
+    return !AD_CONFIG.MOCK_MODE && params.get('mock') !== '1' && !!AD_CONFIG.AD_UNIT_PATH;
 }
 
-const provider = useRealAds()
-    ? GamProvider({ onReady, onAdImpression, onGranted, onClosed })
-    : MockProvider({ onReady, onAdImpression, onGranted, onClosed });
+const PROVIDER_HOOKS = { onReady, onAdImpression, onGranted, onClosed, onNoFill };
+const provider = useRealAds() ? GamProvider(PROVIDER_HOOKS) : MockProvider(PROVIDER_HOOKS);
 
 function onReady() {
     rewardState.ready = true;
+    rewardState.noFill = false;
     watchBtn.disabled = false;
     watchBtn.textContent = BTN_TEXT;
     statusLine.textContent = '';
-    clearTimeout(fallbackTimer);
     fallbackLink.style.display = 'none';
 }
 
@@ -488,18 +730,32 @@ function onGranted(payload) {
     rewardState.granted = true;
     saveUnlockMap(writeUnlocked(loadUnlockMap(), destination));
     track('rewardedRewardGrantedJS', { payload: payload });
-    if (useRealAds()) showSuccess();          // real: overlay 由 GAM 管理，直接进成功态
+    // 成功态统一等广告关闭后再进：rewarded 广告播完后需由用户手动关闭
 }
 
 function onClosed(detail) {
-    if (rewardState.granted) {
-        if (!useRealAds()) showSuccess();     // mock: 关闭遮罩后进成功态
-    } else {
-        track('close_no_reward');
-        watchBtn.disabled = false;            // 允许重试
+    if (rewardState.granted) { showSuccess(); return; }
+    track('close_no_reward');
+    rewardState.ready = false;
+    statusLine.textContent = TEXT.noReward;
+    if (useRealAds()) {                 // real: provider 已重新预取，等 onReady 再放开按钮
+        watchBtn.disabled = true;
+        watchBtn.textContent = TEXT.preparing;
+    } else {                            // mock: 无需重新请求，可立即重试
+        watchBtn.disabled = false;
         watchBtn.textContent = BTN_TEXT;
-        statusLine.textContent = 'Reward not granted. Try again when ready.';
     }
+}
+
+/* 无填充 / gpt.js 被拦截：给明确文案，并放开"不看广告直接去文章" */
+function onNoFill(reason) {
+    rewardState.ready = false;
+    rewardState.noFill = true;
+    watchBtn.disabled = false;
+    watchBtn.textContent = TEXT.retry;
+    statusLine.textContent = reason === 'gpt-not-loaded' ? TEXT.blocked : TEXT.noFill;
+    fallbackLink.style.display = 'inline';
+    track('no_fill', { reason: reason });
 }
 
 function showSuccess() {
@@ -521,23 +777,22 @@ function goDestination(eventName) {
     location.href = destination;
 }
 
-/* 无填充降级 */
-let fallbackTimer = null;
-if (useRealAds()) {
-    fallbackTimer = setTimeout(() => {
-        if (!rewardState.ready) {
-            statusLine.textContent = 'No ad available right now.';
-            fallbackLink.style.display = 'inline';
-        }
-    }, AD_CONFIG.REAL_READY_TIMEOUT);
-}
-
 /* ---------- events ---------- */
 watchBtn.addEventListener('click', () => {
+    if (rewardState.noFill) {           // 无填充后的重试
+        track('retry_click');
+        rewardState.noFill = false;
+        watchBtn.disabled = true;
+        watchBtn.textContent = TEXT.preparing;
+        statusLine.textContent = '';
+        fallbackLink.style.display = 'none';
+        provider.retry();
+        return;
+    }
     if (!rewardState.ready) return;
     track('rewardedClickJS');
     watchBtn.disabled = true;
-    watchBtn.textContent = 'Loading ad…';
+    watchBtn.textContent = TEXT.loading;
     provider.show();
 });
 
@@ -566,11 +821,17 @@ closeBtn.addEventListener('click', () => {
         return;
     }
     track('rewardedImpressionJS', { referrer: document.referrer || null, forced: forceGate });
+    dbg('provider', useRealAds() ? 'GAM real' : 'mock', '| adUnit', useRealAds() ? AD_CONFIG.AD_UNIT_PATH : '(none)');
+    loadArticleMeta(destination);
     provider.init();
 })();
 
 /* expose for automated tests */
-window.__rewardedGate = { AD_CONFIG, resolveDestination, readUnlocked, writeUnlocked, loadUnlockMap, destination, track };
+window.__rewardedGate = {
+    AD_CONFIG, ARTICLE_META, TEXT, rewardState, useRealAds,
+    resolveDestination, readUnlocked, writeUnlocked, loadUnlockMap, renderArticleMeta,
+    destination, track
+};
 </script>
 
 </body>
