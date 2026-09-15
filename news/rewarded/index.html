@@ -140,11 +140,6 @@
             margin-bottom: 8px;
         }
 
-        .article-meta {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
         .pitch {
             max-width: 440px;
             margin: 0 auto 20px;
@@ -194,20 +189,6 @@
             border: none;
             cursor: pointer;
             text-decoration: underline;
-        }
-
-        /* success state */
-        .success-icon {
-            width: 64px;
-            height: 64px;
-            margin: 24px auto 16px;
-            border-radius: 50%;
-            background: rgba(34, 197, 94, 0.15);
-            color: #16a34a;
-            font-size: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .hidden { display: none !important; }
@@ -321,7 +302,6 @@
         <div class="article-box hidden" id="articleBoxEl">
             <span class="article-kicker" id="articleKickerEl"></span>
             <h2 class="article-title" id="articleTitleEl"></h2>
-            <p class="article-meta" id="articleMetaEl"></p>
         </div>
 
         <p class="pitch">Discover the latest news, trending stories, and topics Americans are talking about right now.</p>
@@ -329,15 +309,7 @@
         <button class="cta-btn" id="watchBtn" disabled>Preparing ad…</button>
         <p class="status-line" id="statusLine"></p>
         <button class="fallback-link" id="fallbackLink">Ad unavailable — continue to article</button>
-        <p class="fineprint">The full article opens automatically as soon as the video ad finishes.</p>
-    </div>
-
-    <!-- 成功卡片：已解锁 -->
-    <div class="card hidden" id="successCard">
-        <div class="success-icon">✓</div>
-        <h1>You're all set!</h1>
-        <p class="sub" id="successSub">Redirecting to the article…</p>
-        <button class="cta-btn" id="continueBtn">Continue to article →</button>
+        <p class="fineprint">The full article opens as soon as you close the finished video ad.</p>
     </div>
 </div>
 
@@ -370,7 +342,6 @@ const AD_CONFIG = {
     MOCK_READY_DELAY: 800,       // mock: 模拟 rewardedSlotReady 延迟
     MOCK_REWARD_AFTER: 5000,     // mock: 与 GAM 一致，可视满 5 秒发奖
     REAL_READY_TIMEOUT: 10000,   // real: 等 rewardedSlotReady 上限，超时进无填充
-    REDIRECT_COUNTDOWN: 5,       // 发奖后自动跳转倒计时（秒）
     SKIP_RETURN_VISITS: true,    // 已解锁过则直接放行；false = 每次都拦
     UNLOCK_TTL_MS: 7 * 864e5,    // 解锁态有效期 7 天：期内重访直接放行，过期后门页重现
     TARGETING_PARAM: 'brand',    // 要透传的 URL 参数名
@@ -392,8 +363,7 @@ const EVENT_HOOKS = {
     rewardedImpressionJS: null,    // 门页曝光
     rewardedClickJS: null,         // CTA 点击
     rewardedAdImpressionJS: null,  // 广告展示
-    rewardedRewardGrantedJS: null, // 发奖
-    rewardedCtaClickJS: null       // 解锁后 Continue 点击
+    rewardedRewardGrantedJS: null  // 发奖
 };
 
 const DEFAULT_DESTINATION = '/news/ira-roth-conversion-window/';
@@ -405,9 +375,7 @@ const STORAGE_KEY = 'rewarded_unlock';
 const ARTICLE_META = {
     '/news/ira-roth-conversion-window/': {
         kicker: 'RETIREMENT · TAX PLANNING',
-        title: 'She Converted the Whole IRA Before Social Security Started',
-        source: '24/7 Wall Street',
-        date: 'September 10, 2026'
+        title: 'She Converted the Whole IRA Before Social Security Started'
     }
 };
 
@@ -493,9 +461,8 @@ function dbg() {
 
 /* ---------- DOM ---------- */
 const $ = id => document.getElementById(id);
-const mainCard = $('mainCard'), successCard = $('successCard');
 const watchBtn = $('watchBtn'), closeBtn = $('closeBtn'), fallbackLink = $('fallbackLink');
-const statusLine = $('statusLine'), continueBtn = $('continueBtn'), successSub = $('successSub');
+const statusLine = $('statusLine');
 const adOverlay = $('adOverlay'), adCloseBtn = $('adCloseBtn'), adCount = $('adCount'), adBar = $('adBar');
 
 /* render params into UI (textContent — no HTML injection) */
@@ -509,11 +476,6 @@ function renderArticleMeta(meta) {
     $('articleTitleEl').textContent = meta.title;
     if (meta.kicker) $('articleKickerEl').textContent = meta.kicker;
     else $('articleKickerEl').style.display = 'none';
-    const bits = [];
-    if (meta.source) bits.push('By ' + meta.source);
-    if (meta.date) bits.push('Published ' + meta.date);
-    $('articleMetaEl').textContent = bits.join(' · ');
-    if (!bits.length) $('articleMetaEl').style.display = 'none';
     $('articleBoxEl').classList.remove('hidden');
 }
 
@@ -734,7 +696,7 @@ function onGranted(payload) {
 }
 
 function onClosed(detail) {
-    if (rewardState.granted) { showSuccess(); return; }
+    if (rewardState.granted) { goDestination('reward_complete'); return; }   // 看完即走，不再等
     track('close_no_reward');
     rewardState.ready = false;
     statusLine.textContent = TEXT.noReward;
@@ -756,18 +718,6 @@ function onNoFill(reason) {
     statusLine.textContent = reason === 'gpt-not-loaded' ? TEXT.blocked : TEXT.noFill;
     fallbackLink.style.display = 'inline';
     track('no_fill', { reason: reason });
-}
-
-function showSuccess() {
-    mainCard.classList.add('hidden');
-    successCard.classList.remove('hidden');
-    let left = AD_CONFIG.REDIRECT_COUNTDOWN;
-    successSub.textContent = 'Redirecting in ' + left + 's…';
-    const t = setInterval(() => {
-        left--;
-        if (left <= 0) { clearInterval(t); goDestination('auto_redirect'); }
-        else successSub.textContent = 'Redirecting in ' + left + 's…';
-    }, 1000);
 }
 
 function goDestination(eventName) {
@@ -797,11 +747,6 @@ watchBtn.addEventListener('click', () => {
 });
 
 adCloseBtn.addEventListener('click', () => provider.requestClose());
-
-continueBtn.addEventListener('click', () => {
-    track('rewardedCtaClickJS');
-    goDestination('continue_click');
-});
 
 fallbackLink.addEventListener('click', () => goDestination('fallback_no_ad'));
 
