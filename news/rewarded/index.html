@@ -372,7 +372,7 @@ const AD_CONFIG = {
     REAL_READY_TIMEOUT: 10000,   // real: 等 rewardedSlotReady 上限，超时进无填充
     REDIRECT_COUNTDOWN: 5,       // 发奖后自动跳转倒计时（秒）
     SKIP_RETURN_VISITS: true,    // 已解锁过则直接放行；false = 每次都拦
-    UNLOCK_TTL_MS: 0,            // 解锁态有效期（毫秒），0 = 永久
+    UNLOCK_TTL_MS: 7 * 864e5,    // 解锁态有效期 7 天：期内重访直接放行，过期后门页重现
     TARGETING_PARAM: 'brand',    // 要透传的 URL 参数名
     TARGETING_KEY: 'segment'     // 透传成 GAM key-value：brand=Opr_103 -> segment=Opr_103
 };
